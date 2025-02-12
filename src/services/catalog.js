@@ -118,9 +118,34 @@ const getDevice = async (device) => {
     };
 };
 
-module.exports = {
-    getBrands,
-    getBrand,
-    getDevice,
-    searchDeviceByName,
+const searchDeviceByName = async (deviceName) => {
+    const brands = await getBrands(); // Busca todas as marcas
+    let foundDevices = [];
+
+    for (const brand of brands) {
+        const brandHtml = await getDataFromUrl(`/${brand.id}.php`);
+        const $ = cheerio.load(brandHtml);
+        
+        $('div.makers a').each((i, el) => {
+            const name = $(el).find('span').text();
+            if (name.toLowerCase().includes(deviceName.toLowerCase())) {
+                foundDevices.push({
+                    id: $(el).attr('href').replace('.php', ''),
+                    name,
+                    img: $(el).find('img').attr('src'),
+                    brand: brand.name
+                });
+            }
+        });
+    }
+
+    return foundDevices;
+};
+
+// Agora exporte corretamente todas as funções:
+module.exports = { 
+    getBrands, 
+    getBrand, 
+    getDevice, 
+    searchDeviceByName // Adicionando a função corretamente
 };
