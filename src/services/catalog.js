@@ -118,11 +118,14 @@ const getDevice = async (device) => {
     };
 };
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const searchDeviceByName = async (deviceName) => {
-    const brands = await getBrands(); // Busca todas as marcas
+    const brands = await getBrands();
     let foundDevices = [];
 
     for (const brand of brands) {
+        await delay(2000); // Aguarda 2 segundos entre cada requisição
         const brandHtml = await getDataFromUrl(`/${brand.id}.php`);
         const $ = cheerio.load(brandHtml);
         
@@ -141,6 +144,7 @@ const searchDeviceByName = async (deviceName) => {
 
     return foundDevices;
 };
+
 
 // Agora exporte corretamente todas as funções:
 module.exports = { 
