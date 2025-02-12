@@ -125,67 +125,36 @@ let cache = { brands: null, devices: {}, timestamp: 0 };
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
 
 const searchDeviceByName = async (deviceName) => {
-    const now = Date.now();
+    console.log(`Buscando dispositivos para: ${deviceName}`);
 
-    // Se já temos os dados em cache e ainda são válidos, usamos o cache
-    if (cache.brands && (now - cache.timestamp < CACHE_DURATION)) {
-        console.log("Usando cache para evitar requisições desnecessárias.");
-        return filterDevicesFromCache(deviceName);
-    }
+    try {
+        // Usa a página de pesquisa do GSMArena diretamente
+        const searchUrl = `/res.php3?sSearch=${encodeURIComponent(deviceName)}`;
+        const html = await getDataFromUrl(searchUrl);
+        const $ = cheerio.load(html);
 
-    console.log("Buscando marcas para atualizar cache...");
-    const brands = await getBrands();
-    let foundDevices = [];
+        let foundDevices = [];
 
-    for (const brand of brands) {
-        console.log(`Buscando dispositivos da marca: ${brand.name}`);
+        $('div.makers a').each((i, el) => {
+            const name = $(el).find('span').text();
+            foundDevices.push({
+                id: $(el).attr('href').replace('.php', ''),
+                name,
+                img: $(el).find('img').attr('src'),
+                brand: "Desconhecido"
+            });
+        });
 
-        // Evita buscar dispositivos da mesma marca repetidamente
-        if (!cache.devices[brand.id]) {
-            await delay(6000); // Aguardar 6 segundos entre cada requisição para evitar bloqueio
-            try {
-                const brandHtml = await getDataFromUrl(`/${brand.id}.php`);
-                const $ = cheerio.load(brandHtml);
-
-                cache.devices[brand.id] = $('div.makers a').map((i, el) => ({
-                    id: $(el).attr('href').replace('.php', ''),
-                    name: $(el).find('span').text(),
-                    img: $(el).find('img').attr('src'),
-                    brand: brand.name
-                })).get();
-            } catch (error) {
-                console.warn(`Erro ao buscar dispositivos de ${brand.name}:`, error.message);
-            }
+        if (foundDevices.length === 0) {
+            console.log("Nenhum dispositivo encontrado.");
+            return [];
         }
 
-        // Filtrar os dispositivos que correspondem ao nome buscado
-        foundDevices = foundDevices.concat(
-            cache.devices[brand.id].filter(device =>
-                device.name.toLowerCase().includes(deviceName.toLowerCase())
-            )
-        );
-
-        // Se já encontramos dispositivos suficientes, paramos a busca
-        if (foundDevices.length > 5) break;
+        return foundDevices;
+    } catch (error) {
+        console.error("Erro ao buscar dispositivos:", error.message);
+        return [];
     }
-
-    // Atualiza o cache
-    cache.brands = brands;
-    cache.timestamp = Date.now();
-
-    return foundDevices;
-};
-
-const filterDevicesFromCache = (deviceName) => {
-    let results = [];
-    for (const brand in cache.devices) {
-        results = results.concat(
-            cache.devices[brand].filter(device =>
-                device.name.toLowerCase().includes(deviceName.toLowerCase())
-            )
-        );
-    }
-    return results;
 };
 
 module.exports = { 
