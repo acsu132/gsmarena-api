@@ -15,6 +15,7 @@
   "author": "Kirill Potapenko (kirill.potap97@gmail.com)",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.18.2",
     "axios": "^1.2.5",
     "cheerio": "^1.0.0-rc.10"
   },
