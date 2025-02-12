@@ -1,3 +1,5 @@
+const axios = require('axios'); // Certifique-se de que essa linha existe no início do arquivo
+
 exports.getDataFromUrl = async (url) => {
     const html = await axios({
         method: 'get',
@@ -11,6 +13,7 @@ exports.getDataFromUrl = async (url) => {
 
     return html.data;
 };
+
 
 
 exports.getPrice = (text) => {
