@@ -1,18 +1,18 @@
-const axios = require('axios'); // Certifique-se de que essa linha existe no início do arquivo
+const puppeteer = require('puppeteer');
 
 exports.getDataFromUrl = async (url) => {
-    const html = await axios({
-        method: 'get',
-        url: `https://www.gsmarena.com${url}`,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Referer': 'https://www.google.com/'
-        }
-    });
-
-    return html.data;
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const page = await browser.newPage();
+    
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    
+    await page.goto(`https://www.gsmarena.com${url}`, { waitUntil: 'domcontentloaded' });
+    const html = await page.content();
+    
+    await browser.close();
+    return html;
 };
+
 
 
 
