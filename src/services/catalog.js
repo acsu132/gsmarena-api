@@ -122,4 +122,5 @@ module.exports = {
     getBrands,
     getBrand,
     getDevice,
+    searchDeviceByName,
 };
