@@ -118,10 +118,6 @@ const getDevice = async (device) => {
     };
 };
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-const cheerio = require('cheerio');
-const { getDataFromUrl } = require('./utils');
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
