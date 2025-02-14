@@ -1,5 +1,4 @@
 const express = require('express');
-const gsmarena = require('gsmarena-api'); // Adicionando a importação correta
 const catalog = require('./src/services/catalog');
 const deals = require('./src/services/deals');
 const glossary = require('./src/services/glossary');
@@ -34,9 +33,10 @@ app.get('/api/search', async (req, res) => {
 app.get('/api/device/:id', async (req, res) => {
     try {
         const deviceId = req.params.id;
-        const device = await gsmarena.catalog.getDevice(deviceId); // Busca na API original
+        const device = await catalog.getDevice(deviceId); // Usa catalog, que já está no projeto
         res.json(device);
     } catch (error) {
+        console.error('Erro ao buscar dispositivo:', error);
         res.status(500).json({ error: 'Erro ao buscar dispositivo' });
     }
 });
