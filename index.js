@@ -30,6 +30,17 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
+app.get('/api/device/:id', async (req, res) => {
+    try {
+        const deviceId = req.params.id;
+        const device = await gsmarena.catalog.getDevice(deviceId); // Busca na API original
+        res.json(device);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar dispositivo' });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
