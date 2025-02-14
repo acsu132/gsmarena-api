@@ -1,4 +1,5 @@
 const express = require('express');
+const gsmarena = require('gsmarena-api'); // Adicionando a importação correta
 const catalog = require('./src/services/catalog');
 const deals = require('./src/services/deals');
 const glossary = require('./src/services/glossary');
@@ -39,7 +40,6 @@ app.get('/api/device/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar dispositivo' });
     }
 });
-
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
