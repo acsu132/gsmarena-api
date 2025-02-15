@@ -19,7 +19,7 @@ exports.getDataFromUrl = async (url) => {
 });
 
     
-    await page.goto(`https://www.gsmarena.com${url}`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`https://www.gsmarena.com${url}`, { waitUntil: 'networkidle2' });
     const html = await page.content();
     
     await browser.close();
