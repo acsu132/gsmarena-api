@@ -13,11 +13,12 @@ exports.getDataFromUrl = async (url) => {
     await page.setRequestInterception(true);
     page.on('request', (req) => {
     if (['stylesheet', 'font', 'image'].includes(req.resourceType())) {
-        req.abort();
+        req.abort(); // Bloqueia CSS, fontes e imagens
     } else {
         req.continue();
     }
 });
+
 
     
     await page.goto(`https://www.gsmarena.com${url}`, { waitUntil: 'networkidle2' });
