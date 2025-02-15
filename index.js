@@ -6,7 +6,7 @@ const search = require('./src/services/search');
 const top = require('./src/services/top');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.get('/', (req, res) => {
     res.json({ message: 'GSMArena API is running' });
